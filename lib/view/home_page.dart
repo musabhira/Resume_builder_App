@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final localStorageProvider = Provider((_) => LocalStorage());
 
 class HomePage extends ConsumerWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,9 +30,7 @@ class HomePage extends ConsumerWidget {
         ),
         actions: <Widget>[
           GestureDetector(
-            onTap: () {
-              // Navigate to Settings screen
-            },
+            onTap: () {},
             child: Container(
               padding: const EdgeInsets.all(10.0),
               margin: const EdgeInsets.only(right: 10.0),
@@ -41,7 +39,7 @@ class HomePage extends ConsumerWidget {
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: const Icon(
-                Icons.settings_outlined,
+                Icons.nightlight_outlined,
                 color: Color.fromARGB(255, 255, 17, 0),
               ),
             ),
@@ -238,14 +236,20 @@ class HomePage extends ConsumerWidget {
                   ],
                 ),
               ),
+              const Divider(
+                color: Color.fromARGB(255, 255, 17, 0),
+              ),
               const SizedBox(height: 10),
               SizedBox(
                 width: width,
-                child: const Text(
-                  'My Resumes',
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.black,
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    'My Resumes',
+                    style: TextStyle(
+                        fontSize: 19,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
                   ),
                 ),
               ),
