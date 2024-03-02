@@ -2,17 +2,23 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final localStorageProvider = Provider((_) => LocalStorage());
 
 class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+  final ValueNotifier<bool> theme;
+  const HomePage({super.key, required this.theme});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<Resume> resumes = [];
 
     final double width = MediaQuery.of(context).size.width;
+    void changeTheme() async {
+      theme.value = !theme.value;
+      (await SharedPreferences.getInstance()).setBool('theme', theme.value);
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -30,18 +36,14 @@ class HomePage extends ConsumerWidget {
         ),
         actions: <Widget>[
           GestureDetector(
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.all(10.0),
-              margin: const EdgeInsets.only(right: 10.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.shade300),
+            onTap: () {
+              theme.value = !theme.value;
+            },
+            child: IconButton(
+              icon: Icon(
+                theme.value ? Icons.light_mode : Icons.dark_mode,
               ),
-              child: const Icon(
-                Icons.nightlight_outlined,
-                color: Color.fromARGB(255, 255, 17, 0),
-              ),
+              onPressed: () => changeTheme(),
             ),
           ),
         ],
