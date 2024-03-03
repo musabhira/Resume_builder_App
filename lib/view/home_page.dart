@@ -1,7 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:resume_builder_app/controller/home_provider.dart';
+
+import 'package:resume_builder_app/view/ViewResumePage.dart';
+import 'package:resume_builder_app/view/resume_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final localStorageProvider = Provider((_) => LocalStorage());
@@ -12,7 +14,15 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<Resume> resumes = [];
+    void viewResume(int index) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ViewResumePage(
+              index: index,
+            ),
+          ));
+    }
 
     final double width = MediaQuery.of(context).size.width;
     void changeTheme() async {
@@ -21,17 +31,19 @@ class HomePage extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         iconTheme: const IconThemeData(color: Color.fromARGB(255, 255, 17, 0)),
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Resume Builder',
           style: TextStyle(
             fontWeight: FontWeight.w400,
-            color: Colors.black,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
           ),
         ),
         actions: <Widget>[
@@ -160,188 +172,196 @@ class HomePage extends ConsumerWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 10.0,
-            vertical: 10.0,
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.only(bottom: 15.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey.shade100,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 10.0,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black // White color in dark mode
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // showAddDialog(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ResumePage()),
+                            );
+                          },
+                          child: Container(
+                            width: width * 0.45,
+                            padding: const EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 255, 17, 0),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.receipt_long,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'New Resume',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          width: width * 0.45,
+                          padding: const EdgeInsets.all(15.0),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 255, 17, 0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.receipt_long,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Cover Letter',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  const Divider(
+                    color: Color.fromARGB(255, 255, 17, 0),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: width,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        'My Resumes',
+                        style: TextStyle(
+                            fontSize: 19,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white // White color in dark mode
+                                    : Colors.black,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final resume = ref.watch(homeProvider)[index];
+
+                return Column(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        showAddDialog(context);
-                      },
-                      child: Container(
-                        width: width * 0.45,
-                        padding: const EdgeInsets.all(15.0),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 17, 0),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.receipt_long,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              'New Resume',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
+                    ListTile(
+                      onTap: () => viewResume(index),
+                      title: Text(resume.name),
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      width: width * 0.45,
-                      padding: const EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 17, 0),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.receipt_long,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            'Cover Letter',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(height: 16),
                   ],
-                ),
-              ),
-              const Divider(
-                color: Color.fromARGB(255, 255, 17, 0),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: width,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    'My Resumes',
-                    style: TextStyle(
-                        fontSize: 19,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: resumes.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ResumeDetailsScreen(
-                            resume: resumes[index],
-                          ),
-                        ),
-                      );
-                    },
-                    child: ResumeCard(
-                      resume: resumes[index],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
+                );
+              },
+              itemCount: ref.watch(homeProvider).length,
+            )
+          ],
         ),
       ),
     );
   }
 
-  void showAddDialog(BuildContext context) {
-    final TextEditingController titleController = TextEditingController();
+  // void showAddDialog(BuildContext context) {
+  //   final TextEditingController titleController = TextEditingController();
 
-    Widget cancelButton = TextButton(
-      child: const Text('Cancel'),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
+  //   Widget cancelButton = TextButton(
+  //     child: const Text('Cancel'),
+  //     onPressed: () {
+  //       Navigator.pop(context);
+  //     },
+  //   );
 
-    Widget okButton = TextButton(
-      child: const Text('Create'),
-      onPressed: () async {
-        // final String title = titleController.text;
-        // titleController.clear();
-        // createResume(tokens['access'], user['uuid'], title);
-      },
-    );
+  // Widget okButton = TextButton(
+  //   child: const Text('Create'),
+  //   onPressed: () async {
+  //     // final String title = titleController.text;
+  //     // titleController.clear();
+  //     // createResume(tokens['access'], user['uuid'], title);
+  //   },
+  // );
 
-    AlertDialog alert = AlertDialog(
-      title: const Text('Create a new resume'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Resume title',
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 10.0),
-          TextFormField(
-            autofocus: true,
-            controller: titleController,
-            decoration: const InputDecoration(
-              hintText: 'Resume title',
-            ),
-            keyboardType: TextInputType.text,
-          ),
-        ],
-      ),
-      actions: [
-        cancelButton,
-        okButton,
-      ],
-    );
+  // AlertDialog alert = AlertDialog(
+  //   title: const Text('Create a new resume'),
+  //   content: Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const Text(
+  //         'Resume title',
+  //         style: TextStyle(
+  //           color: Colors.grey,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10.0),
+  //       TextFormField(
+  //         autofocus: true,
+  //         controller: titleController,
+  //         decoration: const InputDecoration(
+  //           hintText: 'Resume title',
+  //         ),
+  //         keyboardType: TextInputType.text,
+  //       ),
+  //     ],
+  //   ),
+  //   actions: [
+  //     cancelButton,
+  //     okButton,
+  //   ],
+  // );
 
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  // show the dialog
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return alert;
+  //     },
+  //   );
+  // }
 
   watch(Provider<LocalStorage> localStorageProvider) {}
 }
