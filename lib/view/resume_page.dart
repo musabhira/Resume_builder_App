@@ -225,10 +225,18 @@ class ResumePage extends HookConsumerWidget {
           itemCount: sectionsList.value.length,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => addNewSection(),
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Add New Section'),
+        backgroundColor: const Color.fromARGB(255, 255, 17, 0),
+        foregroundColor: Colors.white,
+        shape: BeveledRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        elevation: 4.0,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

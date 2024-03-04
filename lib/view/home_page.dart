@@ -6,8 +6,6 @@ import 'package:resume_builder_app/view/ViewResumePage.dart';
 import 'package:resume_builder_app/view/resume_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final localStorageProvider = Provider((_) => LocalStorage());
-
 class HomePage extends ConsumerWidget {
   final ValueNotifier<bool> theme;
   const HomePage({super.key, required this.theme});
@@ -105,24 +103,27 @@ class HomePage extends ConsumerWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_2_outlined,
+              leading: const Icon(Icons.receipt_long_outlined,
                   size: 24, color: Colors.white),
               title: const Text(
-                'Profile',
+                'New Resume',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               onTap: () {
-                // Navigate to Profile screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ResumePage()),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.list, size: 24, color: Colors.white),
-              title: const Text(
-                'Settings',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+              title: Text(
+                theme.value ? 'Day Light' : 'Night Mode',
+                style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
               onTap: () {
-                // Navigate to Settings screen
+                changeTheme();
               },
             ),
             ListTile(
@@ -189,7 +190,7 @@ class HomePage extends ConsumerWidget {
                       border: Border(
                         bottom: BorderSide(
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black // White color in dark mode
+                              ? Colors.black
                               : Colors.white,
                         ),
                       ),
@@ -273,7 +274,7 @@ class HomePage extends ConsumerWidget {
                             fontSize: 19,
                             color:
                                 Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white // White color in dark mode
+                                    ? Colors.white
                                     : Colors.black,
                             fontWeight: FontWeight.w400),
                       ),
@@ -290,11 +291,24 @@ class HomePage extends ConsumerWidget {
 
                 return Column(
                   children: [
-                    ListTile(
-                      onTap: () => viewResume(index),
-                      title: Text(resume.name),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      child: Card(
+                        color: const Color.fromARGB(255, 255, 17, 0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 4, // Add elevation for shadow effect
+                        child: ListTile(
+                          onTap: () => viewResume(index),
+                          title: Text(
+                            resume.name,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 16),
                   ],
                 );
               },
@@ -305,120 +319,4 @@ class HomePage extends ConsumerWidget {
       ),
     );
   }
-
-  // void showAddDialog(BuildContext context) {
-  //   final TextEditingController titleController = TextEditingController();
-
-  //   Widget cancelButton = TextButton(
-  //     child: const Text('Cancel'),
-  //     onPressed: () {
-  //       Navigator.pop(context);
-  //     },
-  //   );
-
-  // Widget okButton = TextButton(
-  //   child: const Text('Create'),
-  //   onPressed: () async {
-  //     // final String title = titleController.text;
-  //     // titleController.clear();
-  //     // createResume(tokens['access'], user['uuid'], title);
-  //   },
-  // );
-
-  // AlertDialog alert = AlertDialog(
-  //   title: const Text('Create a new resume'),
-  //   content: Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Text(
-  //         'Resume title',
-  //         style: TextStyle(
-  //           color: Colors.grey,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10.0),
-  //       TextFormField(
-  //         autofocus: true,
-  //         controller: titleController,
-  //         decoration: const InputDecoration(
-  //           hintText: 'Resume title',
-  //         ),
-  //         keyboardType: TextInputType.text,
-  //       ),
-  //     ],
-  //   ),
-  //   actions: [
-  //     cancelButton,
-  //     okButton,
-  //   ],
-  // );
-
-  // show the dialog
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return alert;
-  //     },
-  //   );
-  // }
-
-  watch(Provider<LocalStorage> localStorageProvider) {}
-}
-
-class LocalStorage {}
-
-class Resume {}
-
-class ResumeDetailsScreen extends StatelessWidget {
-  final Resume resume;
-
-  const ResumeDetailsScreen({Key? key, required this.resume}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // Implement resume details screen UI
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Resume Details'),
-      ),
-      body: Center(
-        child: Text('Resume Details will be shown here'),
-      ),
-    );
-  }
-}
-
-class ResumeCard extends StatelessWidget {
-  final Resume resume;
-
-  const ResumeCard({super.key, required this.resume});
-
-  @override
-  Widget build(BuildContext context) {
-    // Implement resume card UI
-    return Card(
-      child: ListTile(
-        title: Text('Resume Title'),
-        subtitle: Text('Resume Description'),
-        onTap: () {
-          // Navigate to resume details screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResumeDetailsScreen(resume: resume),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-void fetchResumes(String? accessToken, String? userId) {
-  // Implement fetching resumes logic
-}
-
-void createResume(String? accessToken, String? userId, String title) {
-  // Implement creating resume logic
 }
